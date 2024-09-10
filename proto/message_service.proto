@@ -1,0 +1,335 @@
+syntax = "proto3";
+import "google/protobuf/wrappers.proto";
+
+package message;
+
+option go_package = "github.com/oyal2/LIFXMaster";
+
+// Redefine the Device message to maintain the existing fields
+message Device {
+    string address = 1;
+    uint32 port = 2;
+    uint64 target = 3;
+    Firmware firmware = 4;
+    WiFi wifi = 5;
+    Power power = 6;
+    Label label = 7;
+    Version version = 8;
+    Info info = 9;
+    Product product = 10;
+    Light light = 11;
+    Infrared infrared = 12;
+    HEV hev = 13;
+    ExtendedColorZone extended_color_zone = 14;
+    Relay relay = 15;
+    Tile tile = 16;
+    Location location = 17;
+    Group group = 18;
+}
+
+// Define the Group message to include an array of Device
+message GroupMap {
+    repeated Device devices = 1;
+    string label = 2;
+    string updated_at = 3;
+}
+
+// Define the Location message to include an array of Group
+message LocationMap {
+    map<string, GroupMap> groups = 1;
+    string label = 2;
+    string updated_at = 3;
+}
+
+message Group {
+    string label = 1;
+    string updated_at = 2;
+}
+
+message Location {
+    string label = 1;
+    string updated_at = 2;
+}
+
+
+
+message Firmware {
+    uint64 build = 1;
+    uint32 version_minor = 2;
+    uint32 version_major = 3;
+}
+
+message WiFi {
+    WifiInfo info = 1;
+    Firmware firmware = 2;
+}
+
+message Power {
+    uint32 level = 1;
+}
+
+message Label {
+    string label = 1;
+}
+
+message Version {
+    uint32 vendor = 1;
+    uint32 product = 2;
+}
+
+message WifiInfo {
+    uint32 signal = 1;
+}
+
+message Info {
+    uint64 time = 1;
+    uint64 uptime = 2;
+    uint64 downtime = 3;
+}
+
+message Product {
+    uint32 pid = 1;
+    string name = 2;
+    Features features = 3;
+    Upgrade upgrades = 4;
+}
+
+message Upgrade {
+    uint32 major = 1;
+    uint32 minor = 2;
+    Features features = 3;
+}
+
+
+message Features {
+    bool hev = 1;
+    bool color = 2;
+    bool chain = 3;
+    bool matrix = 4;
+    bool relays = 5;
+    bool buttons = 6;
+    bool infrared = 7;
+    bool multizone = 8;
+    repeated int32 temperature_range = 9;
+    bool extended_multizone = 10;
+    google.protobuf.Int32Value min_ext_mz_firmware = 11;
+    repeated int32 min_ext_mz_firmware_components = 12;
+}
+
+message Light {
+    uint32 hue = 1;
+    uint32 saturation = 2;
+    uint32 brightness = 3;
+    uint32 kelvin = 4;
+    uint32 power = 5;
+    string label = 6;
+}
+
+message HSBK {
+    uint32 hue = 1;
+    uint32 saturation = 2;
+    uint32 brightness = 3;
+    uint32 kelvin = 4;
+}
+
+message Infrared {
+    uint32 brightness = 1;
+}
+
+message HEV {
+    Cycle cycle = 1;
+    Config config = 2;
+    LastCycleResult last_cycle_result = 3;
+}
+
+message Cycle {
+    uint32 duration_s = 1;
+    uint32 remaining_s = 2;
+    uint32 last_power = 3;
+}
+
+message Config {
+    bool indication = 1;
+    uint32 duration_s = 2;
+}
+
+message LastCycleResult {
+    uint32 result = 1;
+}
+
+message ExtendedColorZone {
+    uint32 zones_count = 1;
+    uint32 zone_index = 2;
+    uint32 colors_count = 3;
+    repeated HSBK colors = 4;
+}
+
+message Relay {
+    RPower r_power = 1;
+}
+
+message RPower {
+    uint32 relay_index = 1;
+    uint32 level = 2;
+}
+
+message Tile {
+    DeviceChain device_chain = 1;
+    Tile64 tile_64 = 2;
+    TileEffect tile_effect = 3;
+    SensorAmbientLight sensor_ambient_light = 4;
+}
+
+message DeviceChain {
+    uint32 start_index = 1;
+    repeated TileDevices tile_devices = 2;
+    uint32 tile_devices_count = 3;
+}
+
+message TileDevices {
+    uint32 accel_meas_x = 1;
+    uint32 accel_meas_y = 2;
+    uint32 accel_meas_z = 3;
+    repeated uint32 reserved2 = 4;
+    uint32 user_x = 5;
+    uint32 user_y = 6;
+    uint32 width = 7;
+    uint32 height = 8;
+    repeated uint32 reserved7 = 9;
+    uint32 device_version_vendor = 10;
+    uint32 device_version_product = 11;
+    repeated uint32 reserved4 = 12;
+    uint64 firmware_build = 13;
+    repeated uint32 reserved8 = 14;
+    uint32 firmware_version_minor = 15;
+    uint32 firmware_version_major = 16;
+    repeated uint32 reserved10 = 17;
+}
+
+message Tile64 {
+    uint32 tile_index = 1;
+    uint32 x = 2;
+    uint32 y = 3;
+    uint32 width = 4;
+    repeated HSBK colors = 5;
+}
+
+message TileEffect {
+    uint32 instanceid = 1;
+    uint32 type = 2;
+    uint32 speed = 3;
+    uint64 duration = 4;
+    repeated uint32 parameters = 5;
+    uint32 palette_count = 6;
+    repeated HSBK palette = 7;
+}
+
+message SensorAmbientLight {
+    repeated uint32 lux = 1;
+}
+
+message GetDevicesRequest {
+}
+
+message GetDevicesResponse {
+    map<string, LocationMap> locations = 1;
+}
+
+message SetLocationLabelRequest {
+    string locationID = 1;
+    string newLabel = 2;
+}
+
+message SetLocationLabelResponse {
+}
+
+message SetGroupLabelRequest {
+    string groupID = 1;
+    string newLabel = 2;
+}
+
+message SetGroupLabelResponse {
+}
+
+message SetDeviceLabelRequest {
+    uint64 deviceID = 1;
+    string newLabel = 2;
+}
+
+message SetDeviceLabelResponse {
+}
+
+message SetColorRequest {
+    map<uint64, HSBK> colors = 1;
+}
+
+message SetColorResponse {
+}
+
+message SetPowerRequest {
+    map<uint64, bool> powers = 1;
+}
+
+message SetPowerResponse {
+}
+
+message StrobeRequest {
+    repeated uint64 deviceIDs = 1;
+    float speed = 2;
+    bool turnOn = 3;
+}
+
+message StrobeResponse {
+}
+
+message ColorCycleRequest {
+    repeated uint64 deviceIDs = 1;
+    float speed = 2;
+    bool turnOn = 3;
+}
+
+message ColorCycleResponse {
+}
+
+message TwinkleRequest {
+    map<uint64,HSBK>  deviceColors = 1;
+    float speed = 2;
+    float intensity  = 3;
+    bool turnOn = 4;
+}
+
+message TwinkleResponse {
+}
+
+message VisualizerRequest {
+    repeated uint64 deviceIDs = 1;
+    float variation  = 2;
+    bool turnOn = 3;
+}
+
+message VisualizerResponse {
+}
+
+message TheaterRequest {
+    repeated uint64 deviceIDs = 1;
+    bool turnOn = 2;
+    int32 screen = 3;
+}
+
+message TheaterResponse {
+}
+
+// The service definition
+service DeviceService {
+    rpc GetDevices (GetDevicesRequest) returns (GetDevicesResponse);
+    rpc SetLocationLabel(SetLocationLabelRequest) returns (SetLocationLabelResponse);
+    rpc SetGroupLabel(SetGroupLabelRequest) returns (SetGroupLabelResponse);
+    rpc SetDeviceLabel(SetDeviceLabelRequest) returns (SetDeviceLabelResponse);
+    rpc SetColor(SetColorRequest) returns (SetColorResponse);
+    rpc SetPower(SetPowerRequest) returns (SetPowerResponse);
+    rpc Strobe(StrobeRequest) returns (StrobeResponse);
+    rpc ColorCycle(ColorCycleRequest) returns (ColorCycleResponse);
+    rpc Twinkle(TwinkleRequest) returns (TwinkleResponse);
+    rpc Visualizer(VisualizerRequest) returns (VisualizerResponse);
+    rpc Theater(TheaterRequest) returns (TheaterResponse);
+}
