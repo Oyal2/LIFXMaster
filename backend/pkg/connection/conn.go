@@ -240,6 +240,9 @@ func (c *LIFXClient) GetAllInfo(ctx context.Context) ([]device.LightDevice, erro
 	var cpyDevices []device.LightDevice
 	for _, device := range c.Device {
 		device.Product = c.ProductInfo.GetProduct(int(device.Version.Product))
+		if device.Product == nil {
+			continue
+		}
 		cpyDevices = append(cpyDevices, *device)
 	}
 

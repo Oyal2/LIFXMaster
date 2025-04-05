@@ -10,8 +10,10 @@ files:
   - '!{.env,.env.*,.npmrc,pnpm-lock.yaml}'
   - '!{tsconfig.json,tsconfig.node.json,tsconfig.web.json}'
 extraResources:
-  - from: "../dist/grpc-server${platform === 'win32' ? '.exe' : ''}"
-    to: "grpc-server${platform === 'win32' ? '.exe' : ''}"
+  - from: "../dist/grpc-server.exe"
+    to: "grpc-server.exe"
+  - from: "../dist/grpc-server"
+    to: "grpc-server"
 asarUnpack:
   - resources/**
 win:
